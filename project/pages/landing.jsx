@@ -2,22 +2,75 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ResponsiveLine } from '@nivo/line';
 import { Users, Calculator, Route, Activity, BarChart3, Clock, Shield } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer , Legend} from 'recharts';
+import { Card, Container, Row, Col } from 'react-bootstrap';
 import './landing.css';
+const dailyRevenue=[ { x: 'Mon', y: 45000 },
+  { x: 'Tue', y: 52000 },
+  { x: 'Wed', y: 49000 },
+  { x: 'Thu', y: 55000 },
+  { x: 'Fri', y: 62000 },
+  { x: 'Sat', y: 68000 },
+  { x: 'Sun', y: 51000 }]
 
-const revenueData = [
-  {
-    id: "daily revenue",
-    data: [
-      { x: 'Mon', y: 45000 },
-      { x: 'Tue', y: 52000 },
-      { x: 'Wed', y: 49000 },
-      { x: 'Thu', y: 55000 },
-      { x: 'Fri', y: 62000 },
-      { x: 'Sat', y: 68000 },
-      { x: 'Sun', y: 51000 }
-    ]
-  }
-];
+const LineChartTheme = {
+  background: "#ffffff", // White background
+  text: {
+    fontSize: 12,
+    fill: "#1e3a8a", // Dark blue for text
+    outlineWidth: 0,
+    outlineColor: "transparent",
+  },
+  axis: {
+    domain: {
+      line: {
+        stroke: "#3b82f6", // Blue for axis lines
+        strokeWidth: 1,
+      },
+    },
+    ticks: {
+      line: {
+        stroke: "#3b82f6", // Blue for tick lines
+        strokeWidth: 1,
+      },
+      text: {
+        fill: "#1e3a8a", // Dark blue for tick labels
+      },
+    },
+    legend: {
+      text: {
+        fill: "#1e3a8a", // Dark blue for axis legends
+      },
+    },
+  },
+  grid: {
+    line: {
+      stroke: "#d1d5db", // Light gray for grid lines
+      strokeWidth: 1,
+    },
+  },
+  legends: {
+    text: {
+      fill: "#1e3a8a", // Dark blue for legend text
+    },
+  },
+  tooltip: {
+    container: {
+      background: "#ffffff", // White background for tooltips
+      color: "#1e3a8a", // Dark blue for tooltip text
+      fontSize: 12,
+      borderRadius: 4,
+      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+    },
+  },
+  crosshair: {
+    line: {
+      stroke: "#3b82f6", // Blue for crosshair lines
+      strokeWidth: 1,
+      strokeOpacity: 0.75,
+    },
+  },
+};
 
 // Theme configuration remains the same as previous version
 
@@ -102,22 +155,64 @@ const MatatuVisionLanding = () => {
             <div className="analytics-card">
               <h3>Daily Revenue Tracking</h3>
               <div className="chart-container">
-                <ResponsiveLine
-                  data={revenueData}
-                  margin={{ top: 20, right: 20, bottom: 50, left: 60 }}
-                  xScale={{ type: 'point' }}
-                  yScale={{ type: 'linear', min: 'auto', max: 'auto' }}
-                  curve="monotoneX"
-                  axisLeft={{
-                    format: value => `KSh ${value/1000}k`
-                  }}
-                  enableArea={true}
-                  areaOpacity={0.15}
-                  useMesh={true}
-                  enableSlices="x"
-                  theme={LineChartTheme}
-                  colors={['#3b82f6']}
-                />
+              <Row className="mt-4">
+        <Col md={8}>
+          <ResponsiveContainer width="100%" height={400}>
+            <LineChart
+              data={dailyRevenue}
+              margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="x" />
+              <YAxis
+                tickFormatter={(value) => `KSh ${value / 1000}k`}
+              />
+              <Tooltip
+                formatter={(value) => [`KSh ${value}`, 'Revenue']}
+                labelFormatter={(label) => `Day: ${label}`}
+              />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="y"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                name="Revenue"
+                dot={{ r: 5 }}
+                activeDot={{ r: 8 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </Col>
+        <Col md={4}>
+          <Card>
+            <Card.Body>
+              <Card.Title>How Revenue is Calculated</Card.Title>
+              <Card.Text>
+            
+                <ul>
+                  <li>
+                    <strong>Geo-tagging Passenger Drop-off Points:</strong> 
+                    Passengers' drop-off locations are geo-tagged to estimate the distance traveled.
+                  </li>
+                  <li>
+                    <strong>Estimating Fare Paid:</strong> 
+                    The fare is calculated based on the distance and predefined fare rates.
+                  </li>
+                  <li>
+                    <strong>Aggregating Revenue per Car:</strong> 
+                    Revenue is calculated for each car in the fleet and aggregated daily.
+                  </li>
+                  <li>
+                    <strong>Real-Time Updates:</strong> 
+                    Real-time revenue rates are computed to enable quicker business decisions.
+                  </li>
+                </ul>
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
               </div>
             </div>
           </motion.div>
